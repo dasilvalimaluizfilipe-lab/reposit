@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet"href="style.css"/>
+    <style>
+   body {
+  background: linear-gradient(135deg, #1a1a1a, #000);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* CAIXA DA CALCULADORA */
+.calculadora {
+  background: #111;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* DISPLAY */
+#display {
+  width: 100%;
+  height: 60px;
+  font-size: 28px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 12px;
+  background: #000;
+  color: #00ff88;
+  text-align: right;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* GRID DOS BOTÕES */
+.botoes {
+  display: grid;
+  grid-template-columns: repeat(4, 70px);
+  gap: 10px;
+}
+
+/* BOTÕES */
+button {
+  width: 70px;
+  height: 70px;
+  font-size: 22px;
+  border: none;
+  border-radius: 15px;
+  background: #222;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* HOVER */
+button:hover {
+  background: #333;
+}
+
+/* CLICK */
+button:active {
+  transform: scale(0.95);
+}
+
+/* BOTÕES DE OPERAÇÃO */
+.operador {
+  background: #ff9500;
+  color: black;
+}
+
+.operador:hover {
+  background: #ffaa33;
+}
+
+/* BOTÃO IGUAL */
+.igual {
+  background: #00c853;
+  color: black;
+}
+
+.igual:hover {
+  background: #00e676;
+}
+
+/* BOTÃO LIMPAR */
+.limpar {
+  background: #ff3b30;
+}
+
+.limpar:hover {
+  background: #ff5c5c;
+}
+    </style>
+</head>
+<body>
+    <div class="calculadora">
+
+  <input type="text" id="display" readonly>
+
+  <div class="botoes">
+
+    <button onclick="adicionar('1')">1</button>
+    <button onclick="adicionar('2')">2</button>
+    <button onclick="adicionar('3')">3</button>
+    <button class="operador" onclick="adicionar('+')">+</button>
+
+    <button onclick="adicionar('4')">4</button>
+    <button onclick="adicionar('5')">5</button>
+    <button onclick="adicionar('6')">6</button>
+    <button class="operador" onclick="adicionar('-')">-</button>
+
+    <button onclick="adicionar('7')">7</button>
+    <button onclick="adicionar('8')">8</button>
+    <button onclick="adicionar('9')">9</button>
+    <button class="operador" onclick="adicionar('*')">*</button>
+
+    <button class="limpar" onclick="limpar()">C</button>
+    <button onclick="adicionar('0')">0</button>
+    <button class="igual" onclick="calcular()">=</button>
+    <button class="operador" onclick="adicionar('/')">/</button>
+
+  </div>
+</div>
+    <script src="script.js"></script>
+    <script>
+        function adicionar(valor){
+            document.getElementById("display").value+=valor;
+        }
+        function limpar(){
+            document.getElementById("display").value="";
+        }
+        function calcular(){
+  let resultado = eval(document.getElementById("display").value);
+  document.getElementById("display").value = resultado;
+}
+    </script>
+</body>
+</html>
