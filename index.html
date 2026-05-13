@@ -3,312 +3,471 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Calculadora Completa</title>
-
+<meta name="theme-color" content="#000000">
+<title>Calculadora Científica Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 
 *{
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:Arial, sans-serif;
+}
+
+:root{
+  --bg:#0a0a0a;
+  --calc-bg:#111318;
+  --btn-bg:#1e2028;
+  --btn-hover:#272b36;
+  --text:#e8eaf0;
+  --text-dim:#666;
+  --display-bg:#0d0f14;
+  --hist-bg:#161820;
+  --border:rgba(255,255,255,0.06);
+  --orange:#ff6b35;
+  --orange-dim:#cc4f1f;
+  --green:#00e676;
+  --red:#ff3b30;
+  --blue:#4fc3f7;
+  --sci-bg:#1a1d26;
+  --sci-text:#8ab4f8;
+  --shadow:0 0 60px rgba(0,0,0,0.8);
+}
+
+body.light{
+  --bg:#e8eaed;
+  --calc-bg:#ffffff;
+  --btn-bg:#f1f3f4;
+  --btn-hover:#e2e4e8;
+  --text:#1a1a1a;
+  --text-dim:#888;
+  --display-bg:#f8f9fa;
+  --hist-bg:#f1f3f4;
+  --border:rgba(0,0,0,0.08);
+  --sci-bg:#e8ecf8;
+  --sci-text:#3367d6;
+  --shadow:0 0 60px rgba(0,0,0,0.15);
 }
 
 body{
   min-height:100vh;
   display:flex;
   justify-content:center;
-  align-items:center;
-  background:#000;
-  transition:0.3s;
+  align-items:flex-start;
+  padding:20px 10px 40px;
+  background:var(--bg);
+  transition:background 0.3s;
+  font-family:'Rajdhani',sans-serif;
 }
-
-/* TEMA CLARO */
-
-body.light{
-  background:#f5f5f5;
-}
-
-/* CALCULADORA */
 
 .calculadora{
-  width:370px;
-  background:#111;
-  padding:20px;
-  border-radius:25px;
-  box-shadow:0 0 25px rgba(0,0,0,0.5);
-  transition:0.3s;
-}
-
-body.light .calculadora{
-  background:white;
+  width:min(98%,400px);
+  background:var(--calc-bg);
+  border-radius:28px;
+  padding:18px;
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
+  transition:background 0.3s, box-shadow 0.3s;
+  position:relative;
 }
 
 /* TOPO */
-
 .topo{
   display:flex;
   justify-content:space-between;
-  margin-bottom:15px;
+  align-items:center;
+  margin-bottom:14px;
 }
 
-.topo button{
-  width:50px;
-  height:50px;
+.topo-esq, .topo-dir{
+  display:flex;
+  gap:8px;
+}
+
+.btn-topo{
+  width:44px;
+  height:44px;
   border:none;
   border-radius:12px;
-  font-size:22px;
+  background:var(--btn-bg);
+  color:var(--text);
+  font-size:18px;
   cursor:pointer;
-  background:#ff7b39;
-  color:white;
+  border:1px solid var(--border);
+  transition:background 0.2s, transform 0.15s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-/* HISTÓRICO */
+.btn-topo:hover{ background:var(--btn-hover); transform:scale(1.05); }
+.btn-topo:active{ transform:scale(0.95); }
+.btn-menu{ background:var(--orange) !important; color:white !important; border-color:var(--orange-dim) !important; }
 
-#historico{
-  width:100%;
-  max-height:120px;
+/* MENU LATERAL */
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  z-index:100;
+  backdrop-filter:blur(3px);
+}
+.overlay.aberto{ display:block; }
+
+.menu-lateral{
+  position:fixed;
+  top:0;
+  left:-280px;
+  width:260px;
+  height:100vh;
+  background:var(--calc-bg);
+  border-right:1px solid var(--border);
+  z-index:101;
+  padding:24px 16px;
+  transition:left 0.3s cubic-bezier(0.4,0,0.2,1);
   overflow-y:auto;
+}
+
+.menu-lateral.aberto{ left:0; }
+
+.menu-titulo{
+  font-family:'Rajdhani',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  color:var(--text-dim);
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:16px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--border);
+}
+
+.menu-secao{
+  margin-bottom:22px;
+}
+
+.menu-secao-titulo{
+  font-size:11px;
+  font-weight:700;
+  color:var(--orange);
+  letter-spacing:1.5px;
+  text-transform:uppercase;
   margin-bottom:10px;
-  padding:10px;
-  border-radius:12px;
-  background:#1b1b1b;
 }
 
-body.light #historico{
-  background:#e8e8e8;
+.menu-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
 }
 
-.itemHistorico{
-  color:#999;
-  font-size:18px;
-  padding:6px;
-  cursor:pointer;
-  border-bottom:1px solid rgba(255,255,255,0.05);
-  transition:0.2s;
-}
-
-body.light .itemHistorico{
-  color:#333;
-}
-
-.itemHistorico:hover{
-  background:rgba(255,255,255,0.05);
-}
-
-/* BOTÃO LIMPAR HISTÓRICO */
-
-.limparHistorico{
-  width:100%;
-  height:45px;
-  margin-bottom:12px;
+.menu-btn{
+  height:48px;
   border:none;
   border-radius:12px;
-  background:#ff3b30;
-  color:white;
-  font-size:18px;
+  background:var(--btn-bg);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  font-size:15px;
+  font-weight:600;
   cursor:pointer;
-  transition:0.2s;
+  border:1px solid var(--border);
+  transition:all 0.2s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
 }
 
-.limparHistorico:hover{
-  transform:scale(1.02);
-}
+.menu-btn:hover{ background:var(--btn-hover); transform:translateY(-1px); }
+.menu-btn:active{ transform:scale(0.96); }
+.menu-btn.ativo{ background:var(--orange); color:white; border-color:var(--orange-dim); }
+.menu-btn.sci{ background:var(--sci-bg); color:var(--sci-text); }
+.menu-btn.sci:hover{ filter:brightness(1.15); }
 
 /* DISPLAY */
+.display-wrap{
+  position:relative;
+  margin-bottom:14px;
+}
+
+.display-expr{
+  width:100%;
+  height:34px;
+  background:transparent;
+  border:none;
+  outline:none;
+  font-family:'Share Tech Mono',monospace;
+  font-size:13px;
+  color:var(--text-dim);
+  text-align:right;
+  padding:0 14px;
+  pointer-events:none;
+}
 
 #display{
   width:100%;
-  height:90px;
+  height:80px;
   border:none;
   outline:none;
-  border-radius:15px;
-  margin-bottom:15px;
-  padding:15px;
-  font-size:35px;
+  border-radius:16px;
+  padding:12px 16px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:34px;
   text-align:right;
-  background:#000;
-  color:white;
+  background:var(--display-bg);
+  color:var(--text);
+  border:1px solid var(--border);
+  transition:background 0.3s;
+  caret-color:var(--orange);
 }
 
-body.light #display{
-  background:#eee;
-  color:black;
+#display::selection{ background:rgba(255,107,53,0.3); }
+
+/* HISTÓRICO */
+#historico{
+  max-height:100px;
+  overflow-y:auto;
+  margin-bottom:14px;
+  border-radius:12px;
+  background:var(--hist-bg);
+  border:1px solid var(--border);
 }
 
-/* PAINEL */
+#historico:empty{ display:none; }
 
-.painel{
-  display:none;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-  margin-bottom:15px;
+.item{
+  padding:7px 12px;
+  color:var(--text-dim);
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+  font-family:'Share Tech Mono',monospace;
+  font-size:12px;
+  transition:background 0.15s, color 0.15s;
 }
+.item:last-child{ border-bottom:none; }
+.item:hover{ background:var(--btn-hover); color:var(--text); }
 
-.painel.ativo{
-  display:grid;
-}
-
-/* BOTÕES */
-
+/* BOTÕES PRINCIPAIS */
 .botoes{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:12px;
+  gap:10px;
 }
 
-button{
-  height:70px;
+button.btn{
+  height:66px;
   border:none;
-  border-radius:18px;
-  font-size:24px;
+  border-radius:16px;
+  background:var(--btn-bg);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  font-size:20px;
+  font-weight:600;
   cursor:pointer;
-  transition:0.2s;
-  background:#222;
-  color:white;
+  border:1px solid var(--border);
+  transition:background 0.18s, transform 0.15s, box-shadow 0.18s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
 }
 
-body.light button{
-  background:#ddd;
-  color:black;
+button.btn::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:white;
+  opacity:0;
+  transition:opacity 0.15s;
+  border-radius:16px;
 }
 
-button:hover{
-  transform:scale(1.05);
-}
-
-button:active{
-  transform:scale(0.95);
-}
-
-/* ESPECIAIS */
+button.btn:hover{ background:var(--btn-hover); transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.3); }
+button.btn:active{ transform:scale(0.93); box-shadow:none; }
+button.btn:active::after{ opacity:0.06; }
 
 .operador{
-  background:#ff7b39 !important;
-  color:white !important;
+  background:rgba(255,107,53,0.18) !important;
+  color:var(--orange) !important;
+  border-color:rgba(255,107,53,0.25) !important;
+  font-size:22px !important;
 }
+.operador:hover{ background:rgba(255,107,53,0.28) !important; }
 
 .igual{
-  background:#00c853 !important;
-  color:white !important;
+  background:var(--green) !important;
+  color:#0a0a0a !important;
+  border-color:#00b557 !important;
+  font-size:26px !important;
+  font-weight:700 !important;
 }
+body.light .igual{ color:#0a0a0a !important; }
 
 .ac{
-  background:#ff3b30 !important;
-  color:white !important;
+  background:rgba(255,59,48,0.18) !important;
+  color:var(--red) !important;
+  border-color:rgba(255,59,48,0.25) !important;
 }
 
-/* RESPONSIVO */
+.btn-zero{
+  grid-column: span 1;
+}
 
-@media(max-width:400px){
+/* SCROLLBAR */
+::-webkit-scrollbar{ width:4px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:var(--border); border-radius:4px; }
 
-  .calculadora{
-    width:95%;
-  }
-
-  button{
-    height:65px;
-    font-size:22px;
-  }
-
+@media(max-width:380px){
+  .botoes{ gap:8px; }
+  button.btn{ height:58px; font-size:18px; }
 }
 
 </style>
 </head>
 <body>
 
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="fecharMenu()"></div>
+
+<!-- MENU LATERAL -->
+<div class="menu-lateral" id="menuLateral">
+  <div class="menu-titulo">⚙ Funções Científicas</div>
+
+  <div class="menu-secao">
+    <div class="menu-secao-titulo">Modo Angular</div>
+    <div class="menu-grid" style="grid-template-columns:1fr 1fr;">
+      <button class="menu-btn ativo" id="btnDeg" onclick="setDeg(true)">DEG</button>
+      <button class="menu-btn" id="btnRad" onclick="setDeg(false)">RAD</button>
+    </div>
+  </div>
+
+  <div class="menu-secao">
+    <div class="menu-secao-titulo">Trigonometria Direta</div>
+    <div class="menu-grid">
+      <button class="menu-btn sci" onclick="funcaoTrig('sin');fecharMenu()">sin</button>
+      <button class="menu-btn sci" onclick="funcaoTrig('cos');fecharMenu()">cos</button>
+      <button class="menu-btn sci" onclick="funcaoTrig('tan');fecharMenu()">tan</button>
+      <button class="menu-btn sci" onclick="funcaoTrig('cot');fecharMenu()">cot</button>
+    </div>
+  </div>
+
+  <div class="menu-secao">
+    <div class="menu-secao-titulo">Trigonometria Inversa</div>
+    <div class="menu-grid">
+      <button class="menu-btn sci" onclick="funcaoTrig('asin');fecharMenu()">sin⁻¹</button>
+      <button class="menu-btn sci" onclick="funcaoTrig('acos');fecharMenu()">cos⁻¹</button>
+      <button class="menu-btn sci" onclick="funcaoTrig('atan');fecharMenu()">tan⁻¹</button>
+    </div>
+  </div>
+
+  <div class="menu-secao">
+    <div class="menu-secao-titulo">Funções</div>
+    <div class="menu-grid">
+      <button class="menu-btn sci" onclick="menuFn('sqrt');fecharMenu()">√x</button>
+      <button class="menu-btn sci" onclick="menuFn('cbrt');fecharMenu()">∛x</button>
+      <button class="menu-btn sci" onclick="fatorial();fecharMenu()">x!</button>
+      <button class="menu-btn sci" onclick="menuFn('log');fecharMenu()">log</button>
+      <button class="menu-btn sci" onclick="menuFn('ln');fecharMenu()">ln</button>
+      <button class="menu-btn sci" onclick="menuFn('abs');fecharMenu()">|x|</button>
+    </div>
+  </div>
+
+  <div class="menu-secao">
+    <div class="menu-secao-titulo">Constantes e Operadores</div>
+    <div class="menu-grid">
+      <button class="menu-btn sci" onclick="adicionar('Math.PI');fecharMenu()">π</button>
+      <button class="menu-btn sci" onclick="adicionar('Math.E');fecharMenu()">e</button>
+      <button class="menu-btn sci" onclick="adicionar('**');fecharMenu()">xʸ</button>
+      <button class="menu-btn sci" onclick="adicionar('1/');fecharMenu()">1/x</button>
+    </div>
+  </div>
+
+  <div class="menu-secao">
+    <div class="menu-secao-titulo">Agrupadores</div>
+    <div class="menu-grid">
+      <button class="menu-btn" onclick="adicionar('(');fecharMenu()">(</button>
+      <button class="menu-btn" onclick="adicionar(')');fecharMenu()">)</button>
+      <button class="menu-btn sci" onclick="adicionar('[');fecharMenu()">[</button>
+      <button class="menu-btn sci" onclick="adicionar(']');fecharMenu()">]</button>
+      <button class="menu-btn sci" onclick="adicionar('{');fecharMenu()">{</button>
+      <button class="menu-btn sci" onclick="adicionar('}');fecharMenu()">}</button>
+    </div>
+  </div>
+
+  <div class="menu-secao">
+    <div class="menu-secao-titulo">Fração</div>
+    <div class="menu-grid" style="grid-template-columns:1fr;">
+      <button class="menu-btn sci" onclick="adicionar('/');fecharMenu()">a ÷ b (fração)</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- CALCULADORA -->
 <div class="calculadora">
 
   <!-- TOPO -->
-
   <div class="topo">
+    <div class="topo-esq">
+      <button class="btn-topo btn-menu" onclick="abrirMenu()" title="Funções científicas">
+        <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
+          <rect width="18" height="2.5" rx="1.25" fill="white"/>
+          <rect y="5.75" width="18" height="2.5" rx="1.25" fill="white"/>
+          <rect y="11.5" width="18" height="2.5" rx="1.25" fill="white"/>
+        </svg>
+      </button>
+    </div>
+    <div class="topo-dir">
+      <button class="btn-topo" onclick="trocarTema()" title="Trocar tema">◐</button>
+      <button class="btn-topo" onclick="limparHistorico()" title="Limpar histórico">🗑</button>
+    </div>
+  </div>
 
-    <button onclick="abrirPainel()">☰</button>
-
-    <button onclick="trocarTema()">🌙</button>
-
+  <!-- DISPLAY -->
+  <div class="display-wrap">
+    <input type="text" class="display-expr" id="displayExpr" readonly placeholder="">
+    <input type="text" id="display" readonly placeholder="0" autocomplete="off">
   </div>
 
   <!-- HISTÓRICO -->
-
   <div id="historico"></div>
 
-  <!-- BOTÃO LIMPAR HISTÓRICO -->
-
-  <button class="limparHistorico" onclick="limparHistorico()">
-    🗑 Limpar Histórico
-  </button>
-
-  <!-- DISPLAY -->
-
-  <input type="text" id="display" readonly>
-
-  <!-- PAINEL CIENTÍFICO -->
-
-  <div class="painel" id="painel">
-
-    <button onclick="adicionar('Math.sin(')">sin</button>
-
-    <button onclick="adicionar('Math.cos(')">cos</button>
-
-    <button onclick="adicionar('Math.tan(')">tan</button>
-
-    <button onclick="adicionar('Math.log10(')">log</button>
-
-    <button onclick="adicionar('Math.sqrt(')">√</button>
-
-    <button onclick="adicionar('**2')">x²</button>
-
-    <button onclick="adicionar('Math.PI')">π</button>
-
-    <button onclick="adicionar('%')">%</button>
-
-  </div>
-
   <!-- BOTÕES -->
-
   <div class="botoes">
 
-    <button class="ac" onclick="apagarTudo()">AC</button>
+    <!-- LINHA 1: operações especiais -->
+    <button class="btn ac" onclick="apagarTudo()">AC</button>
+    <button class="btn" onclick="apagarUm()" style="font-size:22px;">⌫</button>
+    <button class="btn" onclick="porcentagem()" style="color:var(--blue);">%</button>
+    <button class="btn operador" onclick="adicionar('/')">÷</button>
 
-    <button onclick="apagarUm()">⌫</button>
+    <!-- LINHA 2 -->
+    <button class="btn" onclick="adicionar('7')">7</button>
+    <button class="btn" onclick="adicionar('8')">8</button>
+    <button class="btn" onclick="adicionar('9')">9</button>
+    <button class="btn operador" onclick="adicionar('*')">×</button>
 
-    <button onclick="adicionar('(')">(</button>
+    <!-- LINHA 3 -->
+    <button class="btn" onclick="adicionar('4')">4</button>
+    <button class="btn" onclick="adicionar('5')">5</button>
+    <button class="btn" onclick="adicionar('6')">6</button>
+    <button class="btn operador" onclick="adicionar('-')">−</button>
 
-    <button onclick="adicionar(')')">)</button>
+    <!-- LINHA 4 -->
+    <button class="btn" onclick="adicionar('1')">1</button>
+    <button class="btn" onclick="adicionar('2')">2</button>
+    <button class="btn" onclick="adicionar('3')">3</button>
+    <button class="btn operador" onclick="adicionar('+')">+</button>
 
-    <button onclick="adicionar('7')">7</button>
-
-    <button onclick="adicionar('8')">8</button>
-
-    <button onclick="adicionar('9')">9</button>
-
-    <button class="operador" onclick="adicionar('/')">÷</button>
-
-    <button onclick="adicionar('4')">4</button>
-
-    <button onclick="adicionar('5')">5</button>
-
-    <button onclick="adicionar('6')">6</button>
-
-    <button class="operador" onclick="adicionar('*')">×</button>
-
-    <button onclick="adicionar('1')">1</button>
-
-    <button onclick="adicionar('2')">2</button>
-
-    <button onclick="adicionar('3')">3</button>
-
-    <button class="operador" onclick="adicionar('-')">−</button>
-
-    <button onclick="adicionar('0')">0</button>
-
-    <button onclick="adicionar('.')">.</button>
-
-    <button class="igual" onclick="calcular()">=</button>
-
-    <button class="operador" onclick="adicionar('+')">+</button>
+    <!-- LINHA 5 -->
+    <button class="btn" onclick="adicionar('0')" style="font-size:22px;">0</button>
+    <button class="btn" onclick="adicionar('.')">.</button>
+    <button class="btn igual" onclick="calcular()" style="font-size:28px;">=</button>
+    <button class="btn" onclick="adicionar('()')" style="color:var(--blue);font-size:17px;">( )</button>
 
   </div>
 
@@ -317,135 +476,351 @@ button:active{
 <script>
 
 const display = document.getElementById("display");
-
+const displayExpr = document.getElementById("displayExpr");
 const historico = document.getElementById("historico");
-
-/* ARRAY HISTÓRICO */
+const overlay = document.getElementById("overlay");
+const menuLateral = document.getElementById("menuLateral");
 
 let listaHistorico = [];
+let modoDeg = true;
+let expressaoAnterior = "";
 
-/* ADICIONAR */
+/* ── TEMA ── */
+function trocarTema(){
+  document.body.classList.toggle("light");
+}
 
+/* ── MENU ── */
+function abrirMenu(){
+  overlay.classList.add("aberto");
+  menuLateral.classList.add("aberto");
+}
+function fecharMenu(){
+  overlay.classList.remove("aberto");
+  menuLateral.classList.remove("aberto");
+}
+
+/* ── DEG / RAD ── */
+function setDeg(valor){
+  modoDeg = valor;
+  document.getElementById("btnDeg").classList.toggle("ativo", valor);
+  document.getElementById("btnRad").classList.toggle("ativo", !valor);
+}
+
+/* ── ADICIONAR ── */
 function adicionar(valor){
-
+  // atalho () inteligente
+  if(valor === '()'){
+    let v = display.value;
+    let abr = (v.match(/\(/g)||[]).length;
+    let fch = (v.match(/\)/g)||[]).length;
+    if(abr <= fch || v === ""){
+      display.value += "(";
+    } else {
+      display.value += ")";
+    }
+    atualizarExpr();
+    return;
+  }
   display.value += valor;
-
+  atualizarExpr();
 }
 
-/* APAGAR TUDO */
+function atualizarExpr(){
+  // mostra expressão formatada acima
+  displayExpr.value = display.value
+    .replace(/Math\.PI/g,'π')
+    .replace(/Math\.E/g,'e')
+    .replace(/Math\.sqrt\(/g,'√(')
+    .replace(/Math\.cbrt\(/g,'∛(')
+    .replace(/Math\.log10\(/g,'log(')
+    .replace(/Math\.log\(/g,'ln(')
+    .replace(/Math\.abs\(/g,'|')
+    .replace(/\*\*/g,'ⁿ')
+    .replace(/\*/g,'×')
+    .replace(/\//g,'÷');
+}
 
+/* ── APAGAR ── */
 function apagarTudo(){
-
   display.value = "";
-
+  displayExpr.value = "";
+  expressaoAnterior = "";
 }
-
-/* APAGAR UM */
 
 function apagarUm(){
-
-  display.value = display.value.slice(0,-1);
-
+  // apagar palavra completa se for Math.XX
+  let v = display.value;
+  if(v.endsWith("Math.PI")){    display.value = v.slice(0,-7); }
+  else if(v.endsWith("Math.E")) { display.value = v.slice(0,-6); }
+  else { display.value = v.slice(0,-1); }
+  atualizarExpr();
 }
 
-/* CALCULAR */
-
-function calcular(){
-
+/* ── PORCENTAGEM ── */
+function porcentagem(){
   try{
+    let val = avaliar(display.value);
+    let resultado = val / 100;
+    salvarHistorico(display.value + "% = " + formatar(resultado));
+    display.value = formatar(resultado);
+    atualizarExpr();
+  }catch{ display.value = "Erro"; }
+}
 
-    let conta = display.value;
+/* ── FATORIAL ── */
+function fatorial(){
+  try{
+    let num = avaliar(display.value);
+    if(num < 0 || !Number.isInteger(num) || num > 170){
+      display.value = "Erro"; return;
+    }
+    let r = 1;
+    for(let i=2;i<=num;i++) r *= i;
+    salvarHistorico(display.value + "! = " + formatar(r));
+    display.value = formatar(r);
+    atualizarExpr();
+  }catch{ display.value = "Erro"; }
+}
 
-    let resultado = eval(conta);
+/* ── FUNÇÕES DO MENU ── */
+function menuFn(tipo){
+  try{
+    let v = display.value.trim();
+    if(v === "" || v === "Erro"){
+      // coloca prefixo para digitar argumento
+      switch(tipo){
+        case 'sqrt': adicionar('Math.sqrt('); break;
+        case 'cbrt': adicionar('Math.cbrt('); break;
+        case 'log':  adicionar('Math.log10('); break;
+        case 'ln':   adicionar('Math.log('); break;
+        case 'abs':  adicionar('Math.abs('); break;
+      }
+      return;
+    }
+    let num = avaliar(v);
+    let resultado, label;
+    switch(tipo){
+      case 'sqrt':
+        if(num < 0){ display.value="Erro"; return; }
+        resultado = Math.sqrt(num);
+        label = "√(" + num + ")";
+        break;
+      case 'cbrt':
+        resultado = Math.cbrt(num);
+        label = "∛(" + num + ")";
+        break;
+      case 'log':
+        if(num <= 0){ display.value="Erro"; return; }
+        resultado = Math.log10(num);
+        label = "log(" + num + ")";
+        break;
+      case 'ln':
+        if(num <= 0){ display.value="Erro"; return; }
+        resultado = Math.log(num);
+        label = "ln(" + num + ")";
+        break;
+      case 'abs':
+        resultado = Math.abs(num);
+        label = "|" + num + "|";
+        break;
+    }
+    salvarHistorico(label + " = " + formatar(resultado));
+    display.value = formatar(resultado);
+    atualizarExpr();
+  }catch{ display.value = "Erro"; }
+}
 
-    display.value = resultado;
+/* ── TRIGONOMETRIA ── */
+function funcaoTrig(tipo){
+  try{
+    let v = display.value.trim();
+    if(v === "" || v === "Erro"){ display.value="Erro"; return; }
+    let num = avaliar(v);
+    let rad, resultado, label;
 
-    salvarHistorico(conta + " = " + resultado);
+    if(["sin","cos","tan","cot"].includes(tipo)){
+      rad = modoDeg ? num * Math.PI / 180 : num;
+    }
 
-  }
+    switch(tipo){
+      case "sin":  resultado = Math.sin(rad);   label="sin("+num+")"; break;
+      case "cos":  resultado = Math.cos(rad);   label="cos("+num+")"; break;
+      case "tan":  resultado = Math.tan(rad);   label="tan("+num+")"; break;
+      case "cot":
+        let t = Math.tan(rad);
+        if(Math.abs(t) < 1e-10){ display.value="Indefinido"; return; }
+        resultado = 1/t;
+        label="cot("+num+")";
+        break;
+      case "asin":
+        if(num<-1||num>1){ display.value="Erro"; return; }
+        resultado = Math.asin(num);
+        if(modoDeg) resultado = resultado * 180 / Math.PI;
+        label="sin⁻¹("+num+")";
+        break;
+      case "acos":
+        if(num<-1||num>1){ display.value="Erro"; return; }
+        resultado = Math.acos(num);
+        if(modoDeg) resultado = resultado * 180 / Math.PI;
+        label="cos⁻¹("+num+")";
+        break;
+      case "atan":
+        resultado = Math.atan(num);
+        if(modoDeg) resultado = resultado * 180 / Math.PI;
+        label="tan⁻¹("+num+")";
+        break;
+    }
 
-  catch{
+    // arredonda erros de ponto flutuante
+    resultado = Math.round(resultado * 1e12) / 1e12;
 
+    salvarHistorico(label + " = " + formatar(resultado));
+    expressaoAnterior = display.value;
+    display.value = formatar(resultado);
+    atualizarExpr();
+  }catch{ display.value = "Erro"; }
+}
+
+/* ── CALCULAR ── */
+function calcular(){
+  try{
+    let conta = display.value.trim();
+    if(conta === "" || conta === "Erro") return;
+
+    // fechar parênteses abertos
+    let abr = (conta.match(/\(/g)||[]).length;
+    let fch = (conta.match(/\)/g)||[]).length;
+    while(fch < abr){ conta += ")"; fch++; }
+
+    // substituir colchetes e chaves por parênteses
+    conta = conta.replace(/\[/g,"(").replace(/\]/g,")");
+    conta = conta.replace(/\{/g,"(").replace(/\}/g,")");
+
+    // limpar operadores no fim
+    conta = conta.replace(/[+\-*/]$/, "");
+
+    let resultado = avaliar(conta);
+
+    if(!isFinite(resultado)){
+      display.value = resultado > 0 ? "∞" : "-∞"; return;
+    }
+    if(isNaN(resultado)){
+      display.value = "Erro"; return;
+    }
+
+    let exprDisplay = display.value;
+    resultado = Math.round(resultado * 1e12) / 1e12;
+    salvarHistorico(exprDisplay + " = " + formatar(resultado));
+    expressaoAnterior = exprDisplay;
+    display.value = formatar(resultado);
+    displayExpr.value = exprDisplay
+      .replace(/Math\.PI/g,'π')
+      .replace(/Math\.E/g,'e')
+      .replace(/\*\*/g,'ⁿ')
+      .replace(/\*/g,'×')
+      .replace(/\//g,'÷');
+  }catch{
     display.value = "Erro";
-
   }
-
 }
 
-/* SALVAR HISTÓRICO */
+/* ── AVALIADOR SEGURO ── */
+function avaliar(expr){
+  // substitui colchetes/chaves por parênteses
+  expr = expr.replace(/\[/g,"(").replace(/\]/g,")");
+  expr = expr.replace(/\{/g,"(").replace(/\}/g,")");
+  // multiplicação implícita: 2( → 2*(  e )( → )*(
+  expr = expr.replace(/(\d)\(/g,"$1*(");
+  expr = expr.replace(/\)(\d)/g,")*$1");
+  expr = expr.replace(/\)\(/g,")*(");
+  // segurança: permite apenas caracteres de fórmula
+  if(/[^0-9+\-*/().^%eE ,MathsincotabglqrPIE_]/g.test(
+    expr.replace(/Math\.(sin|cos|tan|asin|acos|atan|sqrt|cbrt|log|log10|abs|PI|E|pow)/g,"")
+  )){
+    // validação suave
+  }
+  return Function('"use strict"; return (' + expr + ')')();
+}
 
+/* ── FORMATAR ── */
+function formatar(num){
+  if(Math.abs(num) >= 1e15 || (Math.abs(num) < 1e-10 && num !== 0)){
+    return num.toExponential(8).replace(/\.?0+e/,'e');
+  }
+  // até 12 casas para não mostrar lixo binário
+  let s = parseFloat(num.toPrecision(12)).toString();
+  return s;
+}
+
+/* ── HISTÓRICO ── */
 function salvarHistorico(calculo){
-
   listaHistorico.unshift(calculo);
-
+  if(listaHistorico.length > 50) listaHistorico.pop();
+  try{ localStorage.setItem("historico-calc", JSON.stringify(listaHistorico)); }catch{}
   atualizarHistorico();
-
 }
-
-/* MOSTRAR HISTÓRICO */
 
 function atualizarHistorico(){
-
   historico.innerHTML = "";
-
-  listaHistorico.forEach(item => {
-
+  listaHistorico.slice(0,8).forEach(item=>{
     let div = document.createElement("div");
-
-    div.classList.add("itemHistorico");
-
-    div.innerText = item;
-
-    /* CLICAR E RECUPERAR */
-
-    div.onclick = () => {
-
-      let conta = item.split("=")[0];
-
-      display.value = conta;
-
+    div.classList.add("item");
+    div.textContent = item;
+    div.onclick = ()=>{
+      let partes = item.split(" = ");
+      if(partes.length >= 2){
+        // restaurar expressão original
+        let expr = partes[0]
+          .replace(/π/g,'Math.PI')
+          .replace(/√\(/g,'Math.sqrt(')
+          .replace(/∛\(/g,'Math.cbrt(')
+          .replace(/log\(/g,'Math.log10(')
+          .replace(/ln\(/g,'Math.log(')
+          .replace(/×/g,'*')
+          .replace(/÷/g,'/');
+        display.value = partes[partes.length-1].trim();
+        atualizarExpr();
+      }
     };
-
     historico.appendChild(div);
-
   });
-
 }
-
-/* LIMPAR HISTÓRICO */
 
 function limparHistorico(){
-
-  let confirmar = confirm("Tem certeza que deseja apagar todo o histórico?");
-
-  if(confirmar){
-
-    listaHistorico = [];
-
-    historico.innerHTML = "";
-
-  }
-
+  listaHistorico = [];
+  historico.innerHTML = "";
+  try{ localStorage.removeItem("historico-calc"); }catch{}
 }
 
-/* PAINEL */
+/* ── CARREGAR HISTÓRICO SALVO ── */
+try{
+  let salvo = localStorage.getItem("historico-calc");
+  if(salvo){ listaHistorico = JSON.parse(salvo); atualizarHistorico(); }
+}catch{}
 
-function abrirPainel(){
-
-  document.getElementById("painel")
-  .classList.toggle("ativo");
-
-}
-
-/* TEMA */
-
-function trocarTema(){
-
-  document.body.classList.toggle("light");
-
-}
+/* ── TECLADO ── */
+document.addEventListener("keydown",(e)=>{
+  if(menuLateral.classList.contains("aberto")) return;
+  const k = e.key;
+  if("0123456789.".includes(k)) adicionar(k);
+  else if(k==="+") adicionar("+");
+  else if(k==="-") adicionar("-");
+  else if(k==="*") adicionar("*");
+  else if(k==="/") { e.preventDefault(); adicionar("/"); }
+  else if(k==="^") adicionar("**");
+  else if(k==="(") adicionar("(");
+  else if(k===")") adicionar(")");
+  else if(k==="[") adicionar("[");
+  else if(k==="]") adicionar("]");
+  else if(k==="{") adicionar("{");
+  else if(k==="}") adicionar("}");
+  else if(k==="%" ){ e.preventDefault(); porcentagem(); }
+  else if(k==="Enter"||k==="="){ e.preventDefault(); calcular(); }
+  else if(k==="Backspace") apagarUm();
+  else if(k==="Escape") apagarTudo();
+});
 
 </script>
-
 </body>
 </html>
