@@ -1,144 +1,411 @@
+
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet"href="style.css"/>
-    <style>
-   body {
-  background: linear-gradient(135deg, #1a1a1a, #000);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-family: Arial, sans-serif;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Calculadora Completa</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
 }
 
-/* CAIXA DA CALCULADORA */
-.calculadora {
-  background: #111;
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#000;
+  transition:0.3s;
+}
+
+/* TEMA CLARO */
+
+body.light{
+  background:#f5f5f5;
+}
+
+/* CALCULADORA */
+
+.calculadora{
+  width:370px;
+  background:#111;
+  padding:20px;
+  border-radius:25px;
+  box-shadow:0 0 25px rgba(0,0,0,0.5);
+  transition:0.3s;
+}
+
+body.light .calculadora{
+  background:white;
+}
+
+/* TOPO */
+
+.topo{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:15px;
+}
+
+.topo button{
+  width:50px;
+  height:50px;
+  border:none;
+  border-radius:12px;
+  font-size:22px;
+  cursor:pointer;
+  background:#ff7b39;
+  color:white;
+}
+
+/* HISTÓRICO */
+
+#historico{
+  width:100%;
+  max-height:120px;
+  overflow-y:auto;
+  margin-bottom:10px;
+  padding:10px;
+  border-radius:12px;
+  background:#1b1b1b;
+}
+
+body.light #historico{
+  background:#e8e8e8;
+}
+
+.itemHistorico{
+  color:#999;
+  font-size:18px;
+  padding:6px;
+  cursor:pointer;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  transition:0.2s;
+}
+
+body.light .itemHistorico{
+  color:#333;
+}
+
+.itemHistorico:hover{
+  background:rgba(255,255,255,0.05);
 }
 
 /* DISPLAY */
-#display {
-  width: 100%;
-  height: 60px;
-  font-size: 28px;
-  margin-bottom: 15px;
-  border: none;
-  border-radius: 12px;
-  background: #000;
-  color: #00ff88;
-  text-align: right;
-  padding: 10px;
-  box-sizing: border-box;
+
+#display{
+  width:100%;
+  height:90px;
+  border:none;
+  outline:none;
+  border-radius:15px;
+  margin-bottom:15px;
+  padding:15px;
+  font-size:35px;
+  text-align:right;
+  background:#000;
+  color:white;
 }
 
-/* GRID DOS BOTÕES */
-.botoes {
-  display: grid;
-  grid-template-columns: repeat(4, 70px);
-  gap: 10px;
+body.light #display{
+  background:#eee;
+  color:black;
+}
+
+/* PAINEL */
+
+.painel{
+  display:none;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.painel.ativo{
+  display:grid;
 }
 
 /* BOTÕES */
-button {
-  width: 70px;
-  height: 70px;
-  font-size: 22px;
-  border: none;
-  border-radius: 15px;
-  background: #222;
-  color: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
+
+.botoes{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
 }
 
-/* HOVER */
-button:hover {
-  background: #333;
+button{
+  height:70px;
+  border:none;
+  border-radius:18px;
+  font-size:24px;
+  cursor:pointer;
+  transition:0.2s;
+  background:#222;
+  color:white;
 }
 
-/* CLICK */
-button:active {
-  transform: scale(0.95);
+body.light button{
+  background:#ddd;
+  color:black;
 }
 
-/* BOTÕES DE OPERAÇÃO */
-.operador {
-  background: #ff9500;
-  color: black;
+button:hover{
+  transform:scale(1.05);
 }
 
-.operador:hover {
-  background: #ffaa33;
+button:active{
+  transform:scale(0.95);
 }
 
-/* BOTÃO IGUAL */
-.igual {
-  background: #00c853;
-  color: black;
+/* ESPECIAIS */
+
+.operador{
+  background:#ff7b39 !important;
+  color:white !important;
 }
 
-.igual:hover {
-  background: #00e676;
+.igual{
+  background:#00c853 !important;
+  color:white !important;
 }
 
-/* BOTÃO LIMPAR */
-.limpar {
-  background: #ff3b30;
+.ac{
+  background:#ff3b30 !important;
+  color:white !important;
 }
 
-.limpar:hover {
-  background: #ff5c5c;
+/* RESPONSIVO */
+
+@media(max-width:400px){
+
+  .calculadora{
+    width:95%;
+  }
+
+  button{
+    height:65px;
+    font-size:22px;
+  }
+
 }
-    </style>
+
+</style>
 </head>
 <body>
-    <div class="calculadora">
+
+<div class="calculadora">
+
+  <!-- TOPO -->
+
+  <div class="topo">
+
+    <button onclick="abrirPainel()">☰</button>
+
+    <button onclick="trocarTema()">🌙</button>
+
+  </div>
+
+  <!-- HISTÓRICO -->
+
+  <div id="historico"></div>
+
+  <!-- DISPLAY -->
 
   <input type="text" id="display" readonly>
 
-  <div class="botoes">
+  <!-- PAINEL CIENTÍFICO -->
 
-    <button onclick="adicionar('1')">1</button>
-    <button onclick="adicionar('2')">2</button>
-    <button onclick="adicionar('3')">3</button>
-    <button class="operador" onclick="adicionar('+')">+</button>
+  <div class="painel" id="painel">
 
-    <button onclick="adicionar('4')">4</button>
-    <button onclick="adicionar('5')">5</button>
-    <button onclick="adicionar('6')">6</button>
-    <button class="operador" onclick="adicionar('-')">-</button>
+    <button onclick="adicionar('Math.sin(')">sin</button>
 
-    <button onclick="adicionar('7')">7</button>
-    <button onclick="adicionar('8')">8</button>
-    <button onclick="adicionar('9')">9</button>
-    <button class="operador" onclick="adicionar('*')">*</button>
+    <button onclick="adicionar('Math.cos(')">cos</button>
 
-    <button class="limpar" onclick="limpar()">C</button>
-    <button onclick="adicionar('0')">0</button>
-    <button class="igual" onclick="calcular()">=</button>
-    <button class="operador" onclick="adicionar('/')">/</button>
+    <button onclick="adicionar('Math.tan(')">tan</button>
+
+    <button onclick="adicionar('Math.log10(')">log</button>
+
+    <button onclick="adicionar('Math.sqrt(')">√</button>
+
+    <button onclick="adicionar('**2')">x²</button>
+
+    <button onclick="adicionar('Math.PI')">π</button>
+
+    <button onclick="adicionar('%')">%</button>
 
   </div>
+
+  <!-- BOTÕES -->
+
+  <div class="botoes">
+
+    <button class="ac" onclick="apagarTudo()">AC</button>
+
+    <button onclick="apagarUm()">⌫</button>
+
+    <button onclick="adicionar('(')">(</button>
+
+    <button onclick="adicionar(')')">)</button>
+
+    <button onclick="adicionar('7')">7</button>
+
+    <button onclick="adicionar('8')">8</button>
+
+    <button onclick="adicionar('9')">9</button>
+
+    <button class="operador" onclick="adicionar('/')">÷</button>
+
+    <button onclick="adicionar('4')">4</button>
+
+    <button onclick="adicionar('5')">5</button>
+
+    <button onclick="adicionar('6')">6</button>
+
+    <button class="operador" onclick="adicionar('*')">×</button>
+
+    <button onclick="adicionar('1')">1</button>
+
+    <button onclick="adicionar('2')">2</button>
+
+    <button onclick="adicionar('3')">3</button>
+
+    <button class="operador" onclick="adicionar('-')">−</button>
+
+    <button onclick="adicionar('0')">0</button>
+
+    <button onclick="adicionar('.')">.</button>
+
+    <button class="igual" onclick="calcular()">=</button>
+
+    <button class="operador" onclick="adicionar('+')">+</button>
+
+  </div>
+
 </div>
-    <script src="script.js"></script>
-    <script>
-        function adicionar(valor){
-            document.getElementById("display").value+=valor;
-        }
-        function limpar(){
-            document.getElementById("display").value="";
-        }
-        function calcular(){
-  let resultado = eval(document.getElementById("display").value);
-  document.getElementById("display").value = resultado;
+
+<script>
+
+const display = document.getElementById("display");
+
+const historico = document.getElementById("historico");
+
+/* ARRAY HISTÓRICO */
+
+let listaHistorico = [];
+
+/* ADICIONAR */
+
+function adicionar(valor){
+
+  display.value += valor;
+
 }
-    </script>
+
+/* APAGAR TUDO */
+
+function apagarTudo(){
+
+  display.value = "";
+
+}
+
+/* APAGAR UM */
+
+function apagarUm(){
+
+  display.value = display.value.slice(0,-1);
+
+}
+
+/* CALCULAR */
+
+function calcular(){
+
+  try{
+
+    let conta = display.value;
+
+    let resultado = eval(conta);
+
+    display.value = resultado;
+
+    salvarHistorico(conta + " = " + resultado);
+
+  }
+
+  catch{
+
+    display.value = "Erro";
+
+  }
+
+}
+
+/* SALVAR HISTÓRICO */
+
+function salvarHistorico(calculo){
+
+  listaHistorico.unshift(calculo);
+
+  atualizarHistorico();
+
+}
+
+/* MOSTRAR HISTÓRICO */
+
+function atualizarHistorico(){
+
+  historico.innerHTML = "";
+
+  listaHistorico.forEach(item => {
+
+    let div = document.createElement("div");
+
+    div.classList.add("itemHistorico");
+
+    div.innerText = item;
+
+    /* CLICAR E RECUPERAR */
+
+    div.onclick = () => {
+
+      let conta = item.split("=")[0];
+
+      display.value = conta;
+
+    };
+
+    historico.appendChild(div);
+
+  });
+
+}
+
+/* PAINEL */
+
+function abrirPainel(){
+
+  document.getElementById("painel")
+  .classList.toggle("ativo");
+
+}
+
+/* TEMA */
+
+function trocarTema(){
+
+  document.body.classList.toggle("light");
+
+}
+
+</script>
+
 </body>
 </html>
