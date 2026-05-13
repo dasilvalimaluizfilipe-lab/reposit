@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -98,6 +97,25 @@ body.light .itemHistorico{
   background:rgba(255,255,255,0.05);
 }
 
+/* BOTÃO LIMPAR HISTÓRICO */
+
+.limparHistorico{
+  width:100%;
+  height:45px;
+  margin-bottom:12px;
+  border:none;
+  border-radius:12px;
+  background:#ff3b30;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.limparHistorico:hover{
+  transform:scale(1.02);
+}
+
 /* DISPLAY */
 
 #display{
@@ -195,22 +213,6 @@ button:active{
   }
 
 }
-  .limparHistorico{
-  width:100%;
-  height:45px;
-  margin-bottom:10px;
-  border:none;
-  border-radius:12px;
-  background:#ff3b30;
-  color:white;
-  font-size:18px;
-  cursor:pointer;
-  transition:0.2s;
-}
-
-.limparHistorico:hover{
-  transform:scale(1.02);
-}
 
 </style>
 </head>
@@ -232,9 +234,11 @@ button:active{
 
   <div id="historico"></div>
 
+  <!-- BOTÃO LIMPAR HISTÓRICO -->
+
   <button class="limparHistorico" onclick="limparHistorico()">
-🗑 Limpar Histórico
-</button>
+    🗑 Limpar Histórico
+  </button>
 
   <!-- DISPLAY -->
 
@@ -408,6 +412,22 @@ function atualizarHistorico(){
 
 }
 
+/* LIMPAR HISTÓRICO */
+
+function limparHistorico(){
+
+  let confirmar = confirm("Tem certeza que deseja apagar todo o histórico?");
+
+  if(confirmar){
+
+    listaHistorico = [];
+
+    historico.innerHTML = "";
+
+  }
+
+}
+
 /* PAINEL */
 
 function abrirPainel(){
@@ -424,13 +444,6 @@ function trocarTema(){
   document.body.classList.toggle("light");
 
 }
-  function limparHistorico(){
-
-  listaHistorico = [];
-
-  historico.innerHTML = "";
-
-      }
 
 </script>
 
